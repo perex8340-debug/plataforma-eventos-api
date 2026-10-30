@@ -1,0 +1,45 @@
+{
+    "name": "plataforma-eventos-api",
+    "version": "1.0.0",
+    "description": "API final para una plataforma de eventos con autenticación, roles, tickets y control de cupos",
+    "main": "src/server.js",
+    "scripts": {
+        "start": "node src/server.js",
+        "dev": "nodemon src/server.js",
+        "test": "node --test"
+    },
+    "keywords": [
+        "express",
+        "nodejs",
+        "passport",
+        "jwt",
+        "autenticacion",
+        "mongodb",
+        "mongoose",
+        "bcrypt",
+        "nodemailer",
+        "api"
+    ],
+    "author": "perex8340-debug",
+    "engines": {
+        "node": ">=20.19.0"
+    },
+    "license": "ISC",
+    "dependencies": {
+        "bcrypt": "^6.0.0",
+        "cookie-parser": "^1.4.7",
+        "dotenv": "^16.4.5",
+        "express": "^4.22.3",
+        "jsonwebtoken": "^9.0.3",
+        "mongoose": "^9.9.4",
+        "nodemailer": "^10.3.1",
+        "passport": "^0.7.0",
+        "passport-jwt": "^4.0.1",
+        "passport-local": "^1.0.0"
+    },
+    "devDependencies": {
+        "mongodb-memory-server": "^11.3.0",
+        "nodemon": "^3.1.0",
+        "supertest": "^7.3.1"
+    }
+}

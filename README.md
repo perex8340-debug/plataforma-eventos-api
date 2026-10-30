@@ -9,7 +9,7 @@ API REST para gestionar usuarios, eventos e inscripciones con tickets, control d
 - Consulta de usuario actual y cierre de sesión.
 - Roles **user**, **organizer** y **admin**, con permisos por rol y propiedad del recurso.
 - CRUD de eventos, validaciones de fecha, precio, capacidad y estado, filtros, ordenamiento y paginación.
-- Inscripciones mediante tickets, control de cupos, prevención de duplicados y cancelación que libera capacidad.
+- Inscripciones mediante tickets, reservas atómicas de cupo, prevención de duplicados incluso ante solicitudes concurrentes y cancelación que libera capacidad.
 - Emails de confirmación y cancelación con Nodemailer.
 - DAO, Repository, Services, Controllers y DTOs separados por responsabilidad.
 - Middleware centralizado para respuestas de error consistentes.
@@ -58,13 +58,15 @@ La API no devuelve contraseñas ni sus hashes. Los DTOs también filtran los usu
     tests/
       api.test.js
     docs/
+      informe-revision-deterministica.md
       informe-revision-deterministica-2026-10-18.md
       reporte-ejecucion-tests.md
       reporte-entrega-final.md
+    evidencias/
 
 ## Requisitos e instalación
 
-Se necesita Node.js 20 o superior y una instancia de MongoDB local o Atlas.
+Se necesita Node.js 20.19 o superior y una instancia de MongoDB local o Atlas.
 
 ~~~powershell
 git clone https://github.com/perex8340-debug/plataforma-eventos-api.git
@@ -86,6 +88,7 @@ npm start
 ~~~
 
 La API usa el puerto **3000** por defecto. La ruta de salud es **GET /**.
+Al iniciar, la API sincroniza los cupos reservados con los tickets activos existentes antes de aceptar solicitudes.
 
 ## Variables de entorno
 
@@ -166,20 +169,18 @@ Ejemplo:
 GET /api/events?status=published&category=tech&page=2&limit=5&sort=-date
 ~~~
 
-La respuesta mantiene el formato de la API con la paginación dentro de payload:
+La lista devuelve los campos de paginación al mismo nivel que `data`:
 
 ~~~json
 {
   "status": "success",
-  "payload": {
-    "data": [
-      { "id": "6690...", "title": "Congreso Tech 2026", "status": "published" }
-    ],
-    "page": 2,
-    "limit": 5,
-    "total": 27,
-    "totalPages": 6
-  }
+  "data": [
+    { "id": "6690...", "title": "Congreso Tech 2026", "status": "published" }
+  ],
+  "page": 2,
+  "limit": 5,
+  "total": 27,
+  "totalPages": 6
 }
 ~~~
 
@@ -295,7 +296,7 @@ La suite automatizada no usa credenciales reales ni envía emails externos: apun
 npm test
 ~~~
 
-La suite de integración usa una instancia MongoDB en memoria, Supertest y el runner nativo de Node. Cubre sesiones, cookies, roles, eventos, filtros/paginación, inscripción, duplicados, cupos, cancelaciones, DTOs, permisos y manejo de errores. El resultado actualizado y las limitaciones de la prueba SMTP están en docs/reporte-entrega-final.md.
+La suite de integración usa una instancia MongoDB en memoria, Supertest y el runner nativo de Node. Cubre 49 casos de sesiones, cookies, roles, eventos, filtros/paginación, inscripción, duplicados concurrentes, cupos concurrentes, cancelaciones, DTOs y permisos. Los tests no usan credenciales ni envían correo a cuentas reales; el servidor SMTP local se deja cerrado para verificar que un fallo del proveedor no pierda la inscripción. El resultado está en [docs/reporte-entrega-final.md](docs/reporte-entrega-final.md).
 
 ## Entrega limpia
 
