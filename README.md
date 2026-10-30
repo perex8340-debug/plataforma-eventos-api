@@ -104,6 +104,7 @@ Al iniciar, la API sincroniza los cupos reservados con los tickets activos exist
 | MAIL_USER | Usuario SMTP | Sí |
 | MAIL_PASS | Contraseña o app password SMTP | Sí |
 | MAIL_FROM | Remitente de emails | Sí |
+| MAIL_TEST_TO | Destinatario para la prueba manual de SMTP | Solo para probar |
 
 Usa .env.example como plantilla. No subas .env ni credenciales; ambos quedan fuera del repositorio mediante .gitignore.
 
@@ -288,7 +289,19 @@ Todas las respuestas de error siguen el formato:
 
 Nodemailer envía un email cuando se confirma o cancela una inscripción. Configura las variables MAIL_* para recibirlos realmente. Si SMTP no responde, el ticket y el cambio de cupo se conservan y la API registra el error de envío.
 
-La suite automatizada no usa credenciales reales ni envía emails externos: apunta a un puerto SMTP local cerrado para comprobar que la operación no se pierde si el proveedor de correo falla. Para verificar recepción real, configura un SMTP de desarrollo como Mailtrap o una cuenta de prueba.
+La suite automatizada no usa credenciales reales ni envía emails externos: apunta a un puerto SMTP local cerrado para comprobar que la operación no se pierde si el proveedor de correo falla. Para probar SMTP manualmente con Mailtrap:
+
+1. Crea un inbox de pruebas en Mailtrap y copia sus credenciales SMTP (host, puerto, usuario y contraseña).
+2. Pon esos valores en `MAIL_HOST`, `MAIL_PORT`, `MAIL_USER` y `MAIL_PASS` dentro de `.env`. Usa el remitente indicado/configurado por el proveedor en `MAIL_FROM` y una dirección destino en `MAIL_TEST_TO`.
+3. Ejecuta:
+
+~~~powershell
+npm run test:email
+~~~
+
+4. Comprueba que el mensaje de prueba aparezca en el inbox de Mailtrap.
+
+Mailtrap es un sandbox: permite confirmar que Nodemailer se conecta y que el mensaje llega al inbox de prueba; **no entrega el mensaje al buzón real de `MAIL_TEST_TO`**. Para demostrar recepción en un correo personal, configura un SMTP de entrega real con permiso para enviar.
 
 ## Pruebas
 
