@@ -5,7 +5,7 @@ const {
   MAIL_USER,
   MAIL_PASS,
   MAIL_FROM,
-} = require('../config/env.config');
+} = require('../config/mail.config');
 
 // Transporte configurado SOLO con variables de entorno de .env.
 // Nada de credenciales hardcodeadas en el código.
